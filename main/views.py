@@ -25,7 +25,7 @@ class OutputListCreateAPIView(ListCreateAPIView):
 
 
 
-class SalesListCreate(ListCreateAPIView):
+class SalesListCreateAPIView(ListCreateAPIView):
     queryset = SalesList.objects.all()
     serializer_class = SalesListGetSerializer
 
@@ -33,4 +33,6 @@ class SalesListCreate(ListCreateAPIView):
         if self.request.method == 'GET':
             return SalesListGetSerializer
         return SalesListPostSerializer
+
+
 
