@@ -1,4 +1,4 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -17,7 +17,7 @@ class ProductTempDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductTempSerializer
 
-class ProductListView(ListCreateAPIView):
+class ProductListView(ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
