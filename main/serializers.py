@@ -1,15 +1,13 @@
 from rest_framework import serializers
 from .models import InputList, InputListItem, Output, SaleItem, SalesList
-from inventory.models import Product
-from inventory.serializers import ProductSerializer
-
+from inventory.serializers import ProductSerializer, ProductJustSerializer
 
 
 class InputListItemSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(read_only=True)
+    product = ProductJustSerializer(read_only=True)
     class Meta:
         model = InputListItem
-        fields = ['id', 'product', 'amount', 'total_sum']
+        fields = ['id', 'product', 'amount', 'arrival_price', 'sell_price', 'total_sum']
         read_only_fields = ['total_sum']
 
 class InputListSerializer(serializers.ModelSerializer):
@@ -21,11 +19,10 @@ class InputListSerializer(serializers.ModelSerializer):
         read_only_fields = ['total', 'created_at']
 
 
-
 class InputListItemCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = InputListItem
-        fields = ['id', 'product', 'amount', 'total_sum']
+        fields = ['id', 'product', 'amount', 'arrival_price', 'sell_price', 'total_sum']
         read_only_fields = ['total_sum']
 
     def create(self, validated_data):

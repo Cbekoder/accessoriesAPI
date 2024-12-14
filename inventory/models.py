@@ -5,8 +5,8 @@ class Product(models.Model):
     code = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=255)
     amount = models.PositiveIntegerField(default=0)
-    arrival_price = models.FloatField()
-    sell_price = models.FloatField()
+    arrival_price = models.FloatField(null=True, blank=True)
+    sell_price = models.FloatField(null=True, blank=True)
     min_amount = models.PositiveIntegerField(default=1)
 
     def __str__(self):

@@ -5,13 +5,20 @@ from .models import Product, Expense
 class ProductTempSerializer(ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'code', 'name', 'min_amount', 'arrival_price', 'sell_price']
+        fields = ['id', 'code', 'name', 'min_amount']
+        read_only_fields = ['id']
 
 
 class ProductSerializer(ModelSerializer):
     class Meta:
         model = Product
         fields = "__all__"
+
+
+class ProductJustSerializer(ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'code', 'name']
 
 
 class ExpenseListSerializer(ModelSerializer):

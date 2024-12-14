@@ -20,6 +20,8 @@ class InputList(models.Model):
 class InputListItem(models.Model):
     input_list = models.ForeignKey(InputList, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    arrival_price = models.FloatField()
+    sell_price = models.FloatField()
     amount = models.PositiveIntegerField()
     total_sum = models.FloatField()
 
@@ -29,8 +31,12 @@ class InputListItem(models.Model):
 
     def save(self, *args, **kwargs):
         with transaction.atomic():
-            self.total_sum = self.amount * self.product.arrival_price
+            self.total_sum = self.amount * self.arrival_price
             super().save(*args, **kwargs)
+            if self.product.sell_price != self.sell_price:
+                self.product.sell_price = self.sell_price
+            if self.product.arrival_price != self.arrival_price:
+                self.product.arrival_price = self.arrival_price
             self.product.amount += self.amount
             self.product.save()
             self.input_list.total = self.input_list.inputlistitem_set.aggregate(total_sum=Sum('total_sum'))['total_sum'] or 0.0

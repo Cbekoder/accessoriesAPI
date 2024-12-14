@@ -2,6 +2,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import F
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -20,6 +21,33 @@ class ProductTempDetailView(RetrieveUpdateDestroyAPIView):
 class ProductListView(ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'min',
+                openapi.IN_QUERY,
+                description="Filter products where amount <= min_amount (true/false)",
+                type=openapi.TYPE_BOOLEAN,
+                required=False,
+            ),
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    def get_queryset(self):
+
+        minimum = self.request.query_params.get('min')
+        if minimum and minimum.lower() in ['yes', 'true']:
+            self.queryset = self.queryset.filter(amount__lte=F("min_amount"))
+        else:
+            self.queryset = self.queryset.filter(amount__gt=0)
+
+        self.queryset = self.queryset.order_by('name', '-amount')
+
+        return self.queryset
+
 
 class ProductCodeView(APIView):
     @swagger_auto_schema(
