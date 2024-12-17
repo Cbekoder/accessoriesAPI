@@ -96,15 +96,15 @@ class SalesListPostSerializer(serializers.ModelSerializer):
 
 
 class SaleItemGetSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(read_only=True)
+    product = ProductSerializer()
 
     class Meta:
         model = SaleItem
-        fields = ['id', 'sales_list', 'product', 'amount', 'total_sum']
+        fields = ['id', 'product', 'amount', 'total_sum']
 
 
 class SalesListGetSerializer(serializers.ModelSerializer):
-    products = SaleItemPostSerializer(many=True, source='saleitem_set')
+    products = SaleItemGetSerializer(many=True, source='saleitem_set')
 
     class Meta:
         model = SalesList
