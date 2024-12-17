@@ -11,7 +11,7 @@ class InputListItemSerializer(serializers.ModelSerializer):
         read_only_fields = ['total_sum']
 
 class InputListSerializer(serializers.ModelSerializer):
-    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M")
+    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M", read_only=True)
     products = InputListItemSerializer(many=True, source='inputlistitem_set')
     products_count = serializers.SerializerMethodField()
 
@@ -36,7 +36,7 @@ class InputListItemCreateSerializer(serializers.ModelSerializer):
         return instance
 
 class InputListCreateSerializer(serializers.ModelSerializer):
-    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M")
+    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M", read_only=True)
     products = InputListItemCreateSerializer(many=True, source='inputlistitem_set')
 
     class Meta:
@@ -69,8 +69,8 @@ class OutputGetSerializer(serializers.ModelSerializer):
 class SaleItemPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = SaleItem
-        fields = ['id', 'sales_list', 'product', 'amount', 'sell_price', 'total_sum']
-        read_only_fields = ['id', 'total_sum', 'sales_list']
+        fields = ['id', 'product', 'amount', 'sell_price', 'total_sum']
+        read_only_fields = ['id', 'total_sum',]
 
     def create(self, validated_data):
         return SaleItem.objects.create(**validated_data)
@@ -83,7 +83,7 @@ class SaleItemPostSerializer(serializers.ModelSerializer):
 
 
 class SalesListPostSerializer(serializers.ModelSerializer):
-    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M")
+    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M", read_only=True)
     products = SaleItemPostSerializer(many=True)
 
     class Meta:

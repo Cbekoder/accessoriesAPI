@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
+from rest_framework.filters import SearchFilter
 from django.utils.timezone import now
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -18,9 +19,10 @@ from .models import InputList, Output, SalesList, SaleItem
 class InputListCreateAPIView(ListCreateAPIView):
     queryset = InputList.objects.all()
     serializer_class = InputListSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['inputlistitem__product__code', 'inputlistitem__product__name']
 
     def get_queryset(self):
-
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
 
@@ -53,6 +55,12 @@ class InputListCreateAPIView(ListCreateAPIView):
                 description="End date for filtering (YYYY-MM-DD)",
                 type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE
             ),
+            openapi.Parameter(
+                'search',
+                openapi.IN_QUERY,
+                description="Search by product code or name.",
+                type=openapi.TYPE_STRING
+            ),
         ],
         responses={200: OutputGetSerializer(many=True)}
     )
@@ -62,6 +70,8 @@ class InputListCreateAPIView(ListCreateAPIView):
 class OutputListCreateAPIView(ListCreateAPIView):
     queryset = Output.objects.all()
     serializer_class = OutputCreateSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['product__name', 'product__code']
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -97,6 +107,12 @@ class OutputListCreateAPIView(ListCreateAPIView):
                 description="End date for filtering (YYYY-MM-DD)",
                 type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE
             ),
+            openapi.Parameter(
+                'search',
+                openapi.IN_QUERY,
+                description="Search by product code or name.",
+                type=openapi.TYPE_STRING
+            ),
         ],
         responses={200: OutputGetSerializer(many=True)}
     )
@@ -108,6 +124,8 @@ class OutputListCreateAPIView(ListCreateAPIView):
 class SalesListCreateAPIView(ListCreateAPIView):
     queryset = SalesList.objects.all()
     serializer_class = SalesListGetSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['saleitem__product__code', 'saleitem__product__name']
 
     def get_queryset(self):
 
@@ -142,6 +160,12 @@ class SalesListCreateAPIView(ListCreateAPIView):
                 'end_date', openapi.IN_QUERY,
                 description="End date for filtering (YYYY-MM-DD)",
                 type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE
+            ),
+            openapi.Parameter(
+                'search',
+                openapi.IN_QUERY,
+                description="Search by product code or name.",
+                type=openapi.TYPE_STRING
             ),
         ],
         responses={200: OutputGetSerializer(many=True)}

@@ -1,4 +1,5 @@
 from rest_framework.exceptions import ValidationError
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -16,6 +17,21 @@ from .serializers import (ProductTempSerializer, ExpenseListSerializer,
 class ProductTempListView(ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductTempSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['name', 'code']
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'search',
+                openapi.IN_QUERY,
+                description="Search by template columns: code, name.",
+                type=openapi.TYPE_STRING
+            ),
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 class ProductTempDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
@@ -24,6 +40,8 @@ class ProductTempDetailView(RetrieveUpdateDestroyAPIView):
 class ProductListView(ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['name', 'code']
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -34,13 +52,18 @@ class ProductListView(ListAPIView):
                 type=openapi.TYPE_BOOLEAN,
                 required=False,
             ),
+            openapi.Parameter(
+                'search',
+                openapi.IN_QUERY,
+                description="Search by product columns: code, name.",
+                type=openapi.TYPE_STRING
+            ),
         ]
     )
     def get(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
     def get_queryset(self):
-
         minimum = self.request.query_params.get('min')
         if minimum and minimum.lower() in ['yes', 'true']:
             self.queryset = self.queryset.filter(amount__lte=F("min_amount"))
@@ -92,9 +115,10 @@ class ProductRetrieveAPIView(RetrieveAPIView):
 class ExpensesListCreateView(ListCreateAPIView):
     queryset = Expense.objects.all()
     serializer_class = ExpenseListSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['id', 'reason', 'description']
 
     def get_queryset(self):
-
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
 
@@ -109,6 +133,30 @@ class ExpensesListCreateView(ListCreateAPIView):
             self.queryset = self.queryset.filter(created_at__date__lte=end_date)
 
         return self.queryset
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'start_date', openapi.IN_QUERY,
+                description="Start date for filtering (YYYY-MM-DD)",
+                type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE
+            ),
+            openapi.Parameter(
+                'end_date', openapi.IN_QUERY,
+                description="End date for filtering (YYYY-MM-DD)",
+                type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE
+            ),
+            openapi.Parameter(
+                'search',
+                openapi.IN_QUERY,
+                description="Search by expense colums: id, reason, description.",
+                type=openapi.TYPE_STRING
+            ),
+        ],
+        responses={200: ExpenseListSerializer(many=True)}
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 class ExpenseDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Expense.objects.all()
