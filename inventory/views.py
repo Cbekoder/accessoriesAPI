@@ -1,14 +1,16 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.exceptions import ValidationError
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.utils.dateparse import parse_date
 from django.db.models import F
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-
 from .models import Product, Expense
-from .serializers import ProductTempSerializer, ExpenseListSerializer, ExpenseRetrieveSerializer, ProductSerializer, \
-    ProductMinSerializer
+from .serializers import (ProductTempSerializer, ExpenseListSerializer,
+                          ExpenseRetrieveSerializer, ProductSerializer,
+                          ProductMinSerializer)
 
 
 class ProductTempListView(ListCreateAPIView):
@@ -82,10 +84,31 @@ class ProductCodeView(APIView):
         except Product.DoesNotExist:
             return Response({"error": "Product with the given code does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
+class ProductRetrieveAPIView(RetrieveAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
 
 class ExpensesListCreateView(ListCreateAPIView):
     queryset = Expense.objects.all()
     serializer_class = ExpenseListSerializer
+
+    def get_queryset(self):
+
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+
+        if start_date:
+            if not parse_date(start_date):
+                raise ValidationError({"start_date": "Invalid date format. Use YYYY-MM-DD."})
+            self.queryset = self.queryset.filter(created_at__date__gte=start_date)
+
+        if end_date:
+            if not parse_date(end_date):
+                raise ValidationError({"end_date": "Invalid date format. Use YYYY-MM-DD."})
+            self.queryset = self.queryset.filter(created_at__date__lte=end_date)
+
+        return self.queryset
 
 class ExpenseDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Expense.objects.all()

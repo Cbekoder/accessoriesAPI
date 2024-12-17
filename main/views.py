@@ -150,10 +150,13 @@ class SalesListCreateAPIView(ListCreateAPIView):
         return super().get(request, *args, **kwargs)
 
 
+################################################
+#############    Dashboard         #############
+################################################
 
 class TopSalesView(APIView):
     def get(self, request, *args, **kwargs):
-        # Query parameters
+
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
 
@@ -161,12 +164,12 @@ class TopSalesView(APIView):
             if not end_date:
                 end_date = now()
             else:
-                end_date = datetime.strptime(end_date, '%Y-%m-%d')
-
+                end_date = parse_date(end_date)
             if not start_date:
                 start_date = end_date - timedelta(days=30)
             else:
-                start_date = datetime.strptime(start_date, '%Y-%m-%d')
+                start_date = parse_date(start_date)
+
         except ValueError:
             raise ValidationError("Invalid date format. Use YYYY-MM-DD.")
 
@@ -192,6 +195,52 @@ class TopSalesView(APIView):
             })
 
         return Response(response_data)
+
+
+class InputTotalSumAPIView(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'start_date',
+                openapi.IN_QUERY,
+                description="Start date (format: YYYY-MM-DD)",
+                type=openapi.TYPE_STRING,
+                format='date'
+            ),
+            openapi.Parameter(
+                'end_date',
+                openapi.IN_QUERY,
+                description="End date (format: YYYY-MM-DD)",
+                type=openapi.TYPE_STRING,
+                format='date'
+            )
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+
+        try:
+            if not end_date:
+                end_date = now()
+            else:
+                end_date = parse_date(end_date)
+            if not start_date:
+                start_date = end_date - timedelta(days=30)
+            else:
+                start_date = parse_date(start_date)
+
+            total_sum = InputList.objects.filter(
+                created_at__date__gte=start_date,
+                created_at__date__lte=end_date
+            ).aggregate(total=Sum('total'))['total'] or 0.0
+
+            return Response({"total_sum": total_sum})
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
+
+
 
 
 
