@@ -100,7 +100,7 @@ class SaleItemGetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SaleItem
-        fields = ['id', 'product', 'amount', 'total_sum']
+        fields = ['id', 'product', 'amount', 'sell_price', 'total_sum']
 
 
 class SalesListGetSerializer(serializers.ModelSerializer):
