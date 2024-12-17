@@ -7,7 +7,8 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from .models import Product, Expense
-from .serializers import ProductTempSerializer, ExpenseListSerializer, ExpenseRetrieveSerializer, ProductSerializer
+from .serializers import ProductTempSerializer, ExpenseListSerializer, ExpenseRetrieveSerializer, ProductSerializer, \
+    ProductMinSerializer
 
 
 class ProductTempListView(ListCreateAPIView):
@@ -41,6 +42,8 @@ class ProductListView(ListAPIView):
         minimum = self.request.query_params.get('min')
         if minimum and minimum.lower() in ['yes', 'true']:
             self.queryset = self.queryset.filter(amount__lte=F("min_amount"))
+
+            self.serializer_class = ProductMinSerializer
         else:
             self.queryset = self.queryset.filter(amount__gt=0)
 

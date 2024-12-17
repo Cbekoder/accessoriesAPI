@@ -28,4 +28,5 @@ urlpatterns = [
     path('auth/token-refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('inventory/', include('inventory.urls')),
     path('transaction/', include('main.urls')),
+    path('dashboard/', include('main.urls_dashboard')),
 ]

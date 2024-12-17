@@ -69,26 +69,24 @@ class SalesList(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     total_sum = models.FloatField()
 
-    # def save(self, *args, **kwargs):
-    #     if not self.pk:
-    #         self.total_sum = self.saleitem_set.aggregate(Sum('total_sum'))['total_sum'] or 0.0
-    #     super().save(*args, **kwargs)
 
 class SaleItem(models.Model):
     sales_list = models.ForeignKey(SalesList, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=False)
     amount = models.PositiveIntegerField()
+    sell_price = models.FloatField()
     total_sum = models.FloatField()
 
     def save(self, *args, **kwargs):
-        if self.product:
-            if self.product.amount < self.amount:
-                raise ValueError("Insufficient stock for the product.")
-            self.product.amount -= self.amount
-            self.product.save()
+        with transaction.atomic():
+            if self.product:
+                if self.product.amount < self.amount:
+                    raise ValueError("Insufficient stock for the product.")
+                self.product.amount -= self.amount
+                self.product.save()
 
-        self.total_sum = self.amount * self.product.sell_price
-        super().save(*args, **kwargs)
+            self.total_sum = self.amount * self.sell_price
+            super().save(*args, **kwargs)
 
-        self.sales_list.total_sum = self.sales_list.saleitem_set.aggregate(total_sum=Sum('total_sum'))['total_sum'] or 0.0
-        self.sales_list.save()
+            self.sales_list.total_sum = self.sales_list.saleitem_set.aggregate(total_sum=Sum('total_sum'))['total_sum'] or 0.0
+            self.sales_list.save()

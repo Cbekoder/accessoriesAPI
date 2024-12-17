@@ -62,7 +62,7 @@ class OutputGetSerializer(serializers.ModelSerializer):
 class SaleItemPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = SaleItem
-        fields = ['id', 'sales_list', 'product', 'amount', 'total_sum']
+        fields = ['id', 'sales_list', 'product', 'amount', 'sell_price', 'total_sum']
         read_only_fields = ['id', 'total_sum', 'sales_list']
 
     def create(self, validated_data):
@@ -110,6 +110,10 @@ class SalesListGetSerializer(serializers.ModelSerializer):
         model = SalesList
         fields = ['id', 'created_at', 'total_sum', 'products']
 
+    def validate_products(self, value):
+        if not value or len(value) == 0:
+            raise serializers.ValidationError("At least one product is required")
+        return value
 
 
 
