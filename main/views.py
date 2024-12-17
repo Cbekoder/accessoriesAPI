@@ -20,7 +20,7 @@ class InputListCreateAPIView(ListCreateAPIView):
     queryset = InputList.objects.all()
     serializer_class = InputListSerializer
     filter_backends = [SearchFilter]
-    search_fields = ['inputlistitem__product__code', 'inputlistitem__product__name']
+    search_fields = ['id', 'inputlistitem__product__code', 'inputlistitem__product__name']
 
     def get_queryset(self):
         start_date = self.request.query_params.get('start_date')
@@ -125,7 +125,7 @@ class SalesListCreateAPIView(ListCreateAPIView):
     queryset = SalesList.objects.all()
     serializer_class = SalesListGetSerializer
     filter_backends = [SearchFilter]
-    search_fields = ['saleitem__product__code', 'saleitem__product__name']
+    search_fields = ['id', 'saleitem__product__code', 'saleitem__product__name']
 
     def get_queryset(self):
 
