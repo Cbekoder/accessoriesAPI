@@ -10,6 +10,7 @@ class InputList(models.Model):
     class Meta:
         verbose_name = "Input list"
         verbose_name_plural = "Input lists"
+        ordering = ['-created_at']
 
     # def save(self, *args, **kwargs):
     #     with transaction.atomic():
@@ -55,6 +56,9 @@ class Output(models.Model):
     reason = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def save(self, *args, **kwargs):
         with transaction.atomic():
             if self.pk is None:
@@ -68,6 +72,9 @@ class Output(models.Model):
 class SalesList(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     total_sum = models.FloatField()
+
+    class Meta:
+        ordering = ['-created_at']
 
 
 class SaleItem(models.Model):

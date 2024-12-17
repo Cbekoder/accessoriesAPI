@@ -11,12 +11,17 @@ class InputListItemSerializer(serializers.ModelSerializer):
         read_only_fields = ['total_sum']
 
 class InputListSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M")
     products = InputListItemSerializer(many=True, source='inputlistitem_set')
+    products_count = serializers.SerializerMethodField()
 
     class Meta:
         model = InputList
-        fields = ['id', 'total', 'created_at', 'products']
+        fields = ['id', 'total', 'created_at', 'products_count', 'products']
         read_only_fields = ['total', 'created_at']
+
+    def get_products_count(self, obj):
+        return obj.inputlistitem_set.count()
 
 
 class InputListItemCreateSerializer(serializers.ModelSerializer):
@@ -31,6 +36,7 @@ class InputListItemCreateSerializer(serializers.ModelSerializer):
         return instance
 
 class InputListCreateSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M")
     products = InputListItemCreateSerializer(many=True, source='inputlistitem_set')
 
     class Meta:
@@ -52,6 +58,7 @@ class OutputCreateSerializer(serializers.ModelSerializer):
         fields = ['product', 'amount', 'reason']
 
 class OutputGetSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M")
     product = ProductSerializer()
     class Meta:
         model = Output
@@ -76,6 +83,7 @@ class SaleItemPostSerializer(serializers.ModelSerializer):
 
 
 class SalesListPostSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M")
     products = SaleItemPostSerializer(many=True)
 
     class Meta:
@@ -94,6 +102,11 @@ class SalesListPostSerializer(serializers.ModelSerializer):
         sales_list.products = sold_products
         return sales_list
 
+    def validate_products(self, value):
+        if not value or len(value) == 0:
+            raise serializers.ValidationError("At least one product is required")
+        return value
+
 
 class SaleItemGetSerializer(serializers.ModelSerializer):
     product = ProductSerializer()
@@ -104,16 +117,16 @@ class SaleItemGetSerializer(serializers.ModelSerializer):
 
 
 class SalesListGetSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M")
     products = SaleItemGetSerializer(many=True, source='saleitem_set')
+    products_count = serializers.SerializerMethodField()
 
     class Meta:
         model = SalesList
-        fields = ['id', 'created_at', 'total_sum', 'products']
+        fields = ['id', 'created_at', 'total_sum', 'products_count', 'products']
 
-    def validate_products(self, value):
-        if not value or len(value) == 0:
-            raise serializers.ValidationError("At least one product is required")
-        return value
+    def get_products_count(self, obj):
+        return obj.saleitem_set.count()
 
 
 
