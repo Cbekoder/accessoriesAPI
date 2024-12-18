@@ -1,5 +1,5 @@
 from rest_framework.fields import SerializerMethodField
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, DateTimeField
 from .models import Product, Expense
 
 
@@ -38,6 +38,7 @@ class ProductMinSerializer(ModelSerializer):
 
 
 class ExpenseListSerializer(ModelSerializer):
+    created_at = DateTimeField(format="%d.%m.%Y %H:%M", read_only=True)
     class Meta:
         model = Expense
         fields = ['id', 'reason', 'description', 'total_sum', 'created_at']
