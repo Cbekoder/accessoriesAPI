@@ -67,8 +67,6 @@ class ProductListView(ListAPIView):
         minimum = self.request.query_params.get('min')
         if minimum and minimum.lower() in ['yes', 'true']:
             self.queryset = self.queryset.filter(amount__lte=F("min_amount"))
-
-            self.serializer_class = ProductMinSerializer
         else:
             self.queryset = self.queryset.filter(amount__gt=0)
 
