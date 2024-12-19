@@ -171,7 +171,11 @@ class SalesListCreateAPIView(ListCreateAPIView):
         responses={200: OutputGetSerializer(many=True)}
     )
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+        response = super().get(request, *args, **kwargs)
+        total_sum = self.get_queryset().aggregate(total=Sum('total_sum'))['total'] or 0
+        response.data.update({'total_sum': total_sum})
+
+        return response
 
 
 ################################################
