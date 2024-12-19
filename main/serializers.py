@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -94,15 +95,16 @@ class SalesListPostSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'total_sum']
 
     def create(self, validated_data):
-        sale_items_data = validated_data.pop('products')
+        with transaction.atomic():
+            sale_items_data = validated_data.pop('products')
 
-        sales_list = SalesList.objects.create(total_sum=0.0)
-        sold_products = []
-        for item_data in sale_items_data:
-            instance = SaleItem.objects.create(sales_list=sales_list, **item_data)
-            sold_products.append(instance)
-        sales_list.products = sold_products
-        return sales_list
+            sales_list = SalesList.objects.create(total_sum=0.0)
+            sold_products = []
+            for item_data in sale_items_data:
+                instance = SaleItem.objects.create(sales_list=sales_list, **item_data)
+                sold_products.append(instance)
+            sales_list.products = sold_products
+            return sales_list
 
     def validate_products(self, value):
         if not value or len(value) == 0:
