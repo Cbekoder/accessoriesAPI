@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from .models import InputList, InputListItem, Output, SaleItem, SalesList
 from inventory.serializers import ProductSerializer, ProductJustSerializer
 
@@ -104,7 +106,7 @@ class SalesListPostSerializer(serializers.ModelSerializer):
 
     def validate_products(self, value):
         if not value or len(value) == 0:
-            raise serializers.ValidationError("At least one product is required")
+            raise ValidationError({"error": "At least one product is required"})
         return value
 
 

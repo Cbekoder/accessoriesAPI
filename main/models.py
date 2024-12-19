@@ -90,6 +90,7 @@ class SaleItem(models.Model):
         with transaction.atomic():
             if self.product:
                 if self.product.amount < self.amount:
+                    self.sales_list.delete()
                     raise ValidationError({"error":"Insufficient stock for the product."})
                 self.product.amount -= self.amount
                 self.product.save()
