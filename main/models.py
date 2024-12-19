@@ -1,5 +1,7 @@
 from django.db import models, transaction
 from django.db.models import Sum
+from rest_framework.exceptions import ValidationError
+
 from inventory.models import Product
 
 
@@ -88,7 +90,7 @@ class SaleItem(models.Model):
         with transaction.atomic():
             if self.product:
                 if self.product.amount < self.amount:
-                    raise ValueError("Insufficient stock for the product.")
+                    raise ValidationError({"error":"Insufficient stock for the product."})
                 self.product.amount -= self.amount
                 self.product.save()
 
