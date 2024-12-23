@@ -67,7 +67,12 @@ class OutputGetSerializer(serializers.ModelSerializer):
         model = Output
         fields = ['id', 'product', 'amount', 'reason', 'created_at']
 
+class SaleItemDetailSerializer(serializers.ModelSerializer):
+    product = ProductJustSerializer()
 
+    class Meta:
+        model = SaleItem
+        fields = ['id', 'product', 'amount', 'sell_price', 'total_sum']
 
 class SaleItemPostSerializer(serializers.ModelSerializer):
     class Meta:
@@ -110,6 +115,13 @@ class SalesListPostSerializer(serializers.ModelSerializer):
         if not value or len(value) == 0:
             raise ValidationError({"error": "At least one product is required"})
         return value
+
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['products'] = SaleItemDetailSerializer(instance.products, many=True).data
+        return representation
+
 
 
 class SaleItemGetSerializer(serializers.ModelSerializer):

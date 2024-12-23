@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Product(models.Model):
-    code = models.CharField(max_length=100, unique=True)
+    code = models.CharField(max_length=100, unique=True, null=True, blank=True)
     name = models.CharField(max_length=255)
     amount = models.PositiveIntegerField(default=0)
     arrival_price = models.FloatField(null=True, blank=True)

@@ -82,7 +82,7 @@ class SalesList(models.Model):
 class SaleItem(models.Model):
     sales_list = models.ForeignKey(SalesList, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=False)
-    amount = models.PositiveIntegerField()
+    amount = models.FloatField()
     sell_price = models.FloatField()
     total_sum = models.FloatField()
 

@@ -1,4 +1,5 @@
 from django.db.models import Sum
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
@@ -9,7 +10,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.utils.dateparse import parse_date
 from inventory.models import Product
-from inventory.serializers import ProductJustSerializer
+from inventory.serializers import ProductJustSerializer, ProductSerializer
 from datetime import datetime, timedelta
 from .serializers import InputListSerializer, InputListCreateSerializer, OutputCreateSerializer, OutputGetSerializer, \
     SaleItemGetSerializer, SaleItemPostSerializer, SalesListGetSerializer, SalesListPostSerializer
@@ -176,6 +177,21 @@ class SalesListCreateAPIView(ListCreateAPIView):
         response.data.update({'total_sum': total_sum})
 
         return response
+
+    def perform_create(self, serializer):
+        sales_list = serializer.save()
+
+        sale_items = sales_list.saleitem_set.all()
+        product_details = []
+        for sale_item in sale_items:
+            product_details.append(ProductSerializer(sale_item.product).data)
+
+        sales_list_data = SalesListGetSerializer(sales_list).data
+        sales_list_data['products'] = product_details
+
+        print(sales_list_data)
+
+        return Response(sales_list_data, status=status.HTTP_201_CREATED)
 
 
 ################################################
