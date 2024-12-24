@@ -4,19 +4,7 @@ from .settings import *  # noqa
 # General
 ###################################################################
 
-DEBUG = False
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "accessories_store",
-        "USER": "postgres",
-        "PASSWORD": "parol12345",
-        "HOST": "db",
-        "PORT": "5432",
-        "ATOMIC_REQUESTS": False,
-    }
-}
+DEBUG = True
 
 ###################################################################
 # Django security
