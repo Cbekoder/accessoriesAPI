@@ -152,7 +152,7 @@ SWAGGER_SETTINGS = {
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'uz-uz'
 
 TIME_ZONE = 'Asia/Tashkent'
 
@@ -181,7 +181,7 @@ JAZZMIN_SETTINGS = {
 
     "site_brand": "Warehouse",
 
-    "site_logo": "warehouse/img/logo.png",
+    "site_logo": None,
 
     "login_logo": None,
 
@@ -203,20 +203,20 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
 
         {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
-
-        {"name": "Support", "url": "https://example.com/support", "new_window": True},
-
-        {"model": "auth.User"},
-
-        {"app": "warehouse"},
+        #
+        # {"name": "Support", "url": "https://example.com/support", "new_window": True},
+        #
+        # {"model": "auth.User"},
+        #
+        # {"app": "warehouse"},
     ],
 
     # User Menu #
 
-    "usermenu_links": [
-        {"name": "Support", "url": "https://example.com/support", "new_window": True},
-        {"model": "auth.user"}
-    ],
+    # "usermenu_links": [
+    #     {"name": "Support", "url": "https://example.com/support", "new_window": True},
+    #     {"model": "auth.user"}
+    # ],
 
     # Side Menu #
 
@@ -228,16 +228,16 @@ JAZZMIN_SETTINGS = {
 
     "hide_models": [],
 
-    "order_with_respect_to": ["auth", "warehouse", "warehouse.category", "warehouse.product"],
+    "order_with_respect_to": ["auth", "inventory", "inventory.product", "inventory.expense", "main"],
 
-    "custom_links": {
-        "warehouse": [{
-            "name": "Stock Updates",
-            "url": "stock_updates",
-            "icon": "fas fa-boxes",
-            "permissions": ["warehouse.view_product"]
-        }]
-    },
+    # "custom_links": {
+    #     # "warehouse": [{
+    #     #     "name": "Stock Updates",
+    #     #     "url": "stock_updates",
+    #     #     "icon": "fas fa-boxes",
+    #     #     "permissions": ["warehouse.view_product"]
+    #     # }]
+    # },
 
     "icons": {
         "auth": "fas fa-users-cog",

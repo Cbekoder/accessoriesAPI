@@ -10,8 +10,8 @@ class InputList(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = "Input list"
-        verbose_name_plural = "Input lists"
+        verbose_name = "Mahsulot kirimi "
+        verbose_name_plural = "Mahsulot kirimlari "
         ordering = ['-created_at']
 
     # def save(self, *args, **kwargs):
@@ -29,8 +29,8 @@ class InputListItem(models.Model):
     total_sum = models.FloatField()
 
     class Meta:
-        verbose_name = "Input list item"
-        verbose_name_plural = "Input list items"
+        verbose_name = "Mahsulot "
+        verbose_name_plural = "Mahsulotlar "
 
     def save(self, *args, **kwargs):
         with transaction.atomic():
@@ -59,6 +59,8 @@ class Output(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        verbose_name = 'Mahsulot chiqimi '
+        verbose_name_plural = 'Mahsulot chiqimlari '
         ordering = ['-created_at']
 
     def save(self, *args, **kwargs):
@@ -76,6 +78,8 @@ class SalesList(models.Model):
     total_sum = models.FloatField()
 
     class Meta:
+        verbose_name = "Sotuv "
+        verbose_name_plural = "Sotuvlar "
         ordering = ['-created_at']
 
 
@@ -85,6 +89,10 @@ class SaleItem(models.Model):
     amount = models.FloatField()
     sell_price = models.FloatField()
     total_sum = models.FloatField()
+
+    class Meta:
+        verbose_name = "Mahsulot "
+        verbose_name_plural = "Mahsulotlar "
 
     def save(self, *args, **kwargs):
         with transaction.atomic():

@@ -13,8 +13,8 @@ class Product(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = 'Product'
-        verbose_name_plural = 'Products'
+        verbose_name = 'Mahsulot '
+        verbose_name_plural = 'Mahsulotlar '
         ordering = ['-id']
 
 
@@ -29,6 +29,6 @@ class Expense(models.Model):
         return self.reason
 
     class Meta:
-        verbose_name = 'Expense'
-        verbose_name_plural = 'Expenses'
+        verbose_name = 'Xarajat '
+        verbose_name_plural = 'Xarajatlar '
         ordering = ['-created_at']
